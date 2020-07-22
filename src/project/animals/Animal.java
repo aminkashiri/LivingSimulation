@@ -11,12 +11,12 @@ public class Animal extends Thread{
 	AnimalsController animalsController;
 	AllObjects allObjects;
 	
-	public Animal(int a, int b, int c, AnimalsController animalsController) {
+	public Animal(int a, int b, int c) {
 		x = a;
 		y = b;
 		species = c;
-		this.animalsController = animalsController;
 		allObjects = AllObjects.getAllObjects();
+		this.animalsController = allObjects.getAnimalsController();
 	}
 	
 
@@ -44,7 +44,7 @@ public class Animal extends Thread{
 			animalsController.move(this, toX, toY);
 			
 			try {
-				Thread.sleep(500);
+				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

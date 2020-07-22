@@ -16,12 +16,12 @@ public class BigBang extends Timer{
 //		int m = scanner.nextInt();	
 //		int k = scanner.nextInt();	
 //		int t = scanner.nextInt();	
-		int r = 4;	
-		int s = 2;	
-		int n = 16;	
-		int m = 16;	
+		int r = 8;	
+		int s = 4;	
+		int n = 32;	
+		int m = 32;	
 		int k = 4;	
-		int t = 10;	
+		int t = 1;	
 		World world = new World(r,s,n,m,k,t);
 		bigBang(world);
 //		scanner.close();
@@ -30,9 +30,14 @@ public class BigBang extends Timer{
 	private static void bigBang(World world) {
 		TimerTask evolve = new TimerTask() {
 			
+			int counter = 0;
 			@Override
 			public void run() {
-				world.evolve();
+				counter++;
+				world.printWorld();
+				if(counter%2 == 0) {
+					world.evolve();
+				}
 			}
 		};
 		Timer timer = new Timer();

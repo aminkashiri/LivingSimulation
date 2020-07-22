@@ -2,9 +2,20 @@ package project.utils;
 
 import java.util.Random;
 
+import project.animals.AnimalsController;
+
 public class AllObjects {
 	static AllObjects allObjects;
 	Random random;
+	AnimalsController animalsController;
+
+	public AnimalsController getAnimalsController() {
+		return animalsController;
+	}
+
+	public void setAnimalsController(AnimalsController animalsController) {
+		this.animalsController = animalsController;
+	}
 
 	private AllObjects() {
 		random = new Random();
@@ -20,6 +31,4 @@ public class AllObjects {
 	public int getRandom() {//generates a random number between [-1,1]
 		return random.nextInt(3)-1;
 	}
-	
-	
 }

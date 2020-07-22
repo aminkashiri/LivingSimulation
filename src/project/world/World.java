@@ -54,7 +54,7 @@ public class World {
 			}
 		}
 		
-		animalsController = new AnimalsController(territories);
+		animalsController = new AnimalsController(territories, numberOfSpecies);
 		
 		int deltaX = height/numberOfSpecies;
 		int deltaY = width/initialPopulation;
@@ -63,36 +63,28 @@ public class World {
 		for(int i = 0 ; i<numberOfSpecies ; i++) {//i+1 is species number
 			x = deltaX*(i+1)-1;
 			for(int j = 0 ; j<initialPopulation ; j++) {
-				animal = new Animal(x, (j+1)*deltaY-1, i+1, animalsController);
+				animal = new Animal(x, (j+1)*deltaY-1, i+1);
 				territories[x][(j+1)*deltaY-1].giveLife(animal);
 			}
 		}
 	}
 
 	public void evolve() {
-		year++;
-		if(year % 5 == 0) {
-			animalsController.stop();
-			System.out.println("\n----------------[Before Death]----------------");
-			printWorld();
-			animalsController.kill();
-			System.out.println("\n----------------[After Death]----------------");
-			printWorld();
-			animalsController.birth();
-			System.out.println("\n----------------[Childs Are Born]----------------");
-			printWorld();
-			System.out.println("\n----------------[Next Generation]----------------\n");
-			animalsController.resume();
-		}else {
-			animalsController.stop();
-			System.out.println("");
-			printWorld();
-			System.out.println("");
-			animalsController.resume();
-		}
+		year = (year % numberOfSpecies) +1;
+		animalsController.stop();
+		System.out.println("----------------[Before Death]----------------");
+		printWorld();
+		animalsController.kill();
+		System.out.println("----------------[After Death]----------------");
+		printWorld();
+		animalsController.birth(year);
+		System.out.println("----------------[Childs Are Born]----------------");
+		printWorld();
+		System.out.println("----------------[Next Generation]----------------\n");
+		animalsController.resume();
 	}
 
-	private void printWorld() {
+	public void printWorld() {
 		for(int i = 0 ; i < height ; i++) {
 			for(int j = 0 ; j < width ; j++) {
 				territories[i][j].print();
@@ -101,6 +93,8 @@ public class World {
 //			System.out.println("---"+Thread.currentThread().getPriority());
 			System.out.println();
 		}
+		System.out.println();
+		animalsController.print();
 	}
 
 }
