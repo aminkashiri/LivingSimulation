@@ -1,11 +1,11 @@
-package project_thread.animals;
+package project.thread.animals;
 
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Semaphore;
 
-import project_thread.utils.AllObjects;
-import project_thread.world.Territory;
+import project.thread.world.Territory;
+import project.utils.AllObjects;
 
 public class AnimalsController {
 
@@ -37,7 +37,7 @@ public class AnimalsController {
 		}
 
 
-		AllObjects.getAllObjects().setAnimalsController(this);
+		AllObjects.getAllObjects().setAnimalsControllerThread(this);
 		population = 0;
 		lock = new Object();
 		animalSemaphore = new Semaphore(0);

@@ -1,8 +1,8 @@
-package project_thread.animals;
+package project.thread.animals;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-import project_thread.utils.AllObjects;
+import project.utils.AllObjects;
 
 public class Animal extends Thread{
 	int species;
@@ -16,7 +16,7 @@ public class Animal extends Thread{
 		y = b;
 		species = c;
 		allObjects = AllObjects.getAllObjects();
-		this.animalsController = allObjects.getAnimalsController();
+		this.animalsController = allObjects.getAnimalsControllerThread();
 		animalsController.increasePopulation(1);
 	}
 	

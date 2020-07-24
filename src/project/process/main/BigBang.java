@@ -1,12 +1,12 @@
-package project_thread.main;
+package project.process.main;
 
 import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import project_thread.world.World;
+import project.thread.world.World;
 
-public class BigBang extends Timer {
+public class BigBang {
 	static int timeInterval = 1000;
 
 	public static void main(String[] args) {
@@ -23,6 +23,7 @@ public class BigBang extends Timer {
 		int m = 8;
 		int k = 4;
 		double t = 1;
+		
 		World world = new World(r, s, n, m, k);
 		bigBang(world, t);
 //		scanner.close();
@@ -36,16 +37,8 @@ public class BigBang extends Timer {
 			@Override
 			public void run() {
 				counter++;
-				if(counter % 4 == 0) {
+//				if(counter % 4 == 0) {
 					world.evolve();
-				}
-				if (counter % t == 0) {
-					System.out.println("----------------------------------- Time:"+counter);
-					world.printWorld();
-				}
-//				counter++;
-//				if(counter % 2 == 0) {
-//					world.evolve();
 //				}
 //				if (counter % t == 0) {
 //					System.out.println("----------------------------------- Time:"+counter);

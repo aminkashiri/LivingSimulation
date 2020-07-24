@@ -1,11 +1,11 @@
-package project_thread.world;
+package project.thread.world;
 
 import java.util.ArrayList;
 
-import project_thread.animals.Animal;
-import project_thread.animals.AnimalsController;
-import project_thread.utils.AllObjects;
-import project_thread.utils.Colors;
+import project.thread.animals.Animal;
+import project.thread.animals.AnimalsController;
+import project.utils.AllObjects;
+import project.utils.Colors;
 
 public class Territory {
 	int species;
@@ -21,7 +21,7 @@ public class Territory {
 		this.x = x;
 		this.y = y;
 		species = 0;
-		animalsController = AllObjects.getAllObjects().getAnimalsController();
+		animalsController = AllObjects.getAllObjects().getAnimalsControllerThread();
 
 	}
 	
