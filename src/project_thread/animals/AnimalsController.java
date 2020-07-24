@@ -1,11 +1,11 @@
-package project.animals;
+package project_thread.animals;
 
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Semaphore;
 
-import project.utils.AllObjects;
-import project.world.Territory;
+import project_thread.utils.AllObjects;
+import project_thread.world.Territory;
 
 public class AnimalsController {
 

@@ -1,7 +1,7 @@
-package project.world;
+package project_thread.world;
 
-import project.animals.Animal;
-import project.animals.AnimalsController;
+import project_thread.animals.Animal;
+import project_thread.animals.AnimalsController;
 
 public class World {
 	Territory[][] territories;

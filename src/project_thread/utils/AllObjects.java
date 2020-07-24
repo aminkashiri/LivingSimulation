@@ -1,8 +1,8 @@
-package project.utils;
+package project_thread.utils;
 
 import java.util.Random;
 
-import project.animals.AnimalsController;
+import project_thread.animals.AnimalsController;
 
 public class AllObjects {
 	static AllObjects allObjects;

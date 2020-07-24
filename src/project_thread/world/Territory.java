@@ -1,11 +1,11 @@
-package project.world;
+package project_thread.world;
 
 import java.util.ArrayList;
 
-import project.animals.Animal;
-import project.animals.AnimalsController;
-import project.utils.AllObjects;
-import project.utils.Colors;
+import project_thread.animals.Animal;
+import project_thread.animals.AnimalsController;
+import project_thread.utils.AllObjects;
+import project_thread.utils.Colors;
 
 public class Territory {
 	int species;

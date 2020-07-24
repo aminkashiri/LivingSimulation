@@ -1,10 +1,10 @@
-package project.main;
+package project_thread.main;
 
 import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import project.world.World;
+import project_thread.world.World;
 
 public class BigBang extends Timer {
 	static int timeInterval = 1000;

@@ -1,4 +1,4 @@
-package project.utils;
+package project_thread.utils;
 
 public enum Colors {
     //Color end string, color reset

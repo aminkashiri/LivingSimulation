@@ -1,8 +1,8 @@
-package project.animals;
+package project_thread.animals;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-import project.utils.AllObjects;
+import project_thread.utils.AllObjects;
 
 public class Animal extends Thread{
 	int species;
