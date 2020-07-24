@@ -2,6 +2,7 @@ package project.animals;
 
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.Semaphore;
 
 import project.utils.AllObjects;
 import project.world.Territory;
@@ -18,12 +19,17 @@ public class AnimalsController {
 	int population;
 	int waiting;
 	Object lock;
+	int newDeaths;
+	int newPopulation;
+	Semaphore animalSemaphore;
+	Semaphore controllSemaphore;
 
-	public AnimalsController(Territory[][] territories, int numberOfSpecies) {
+	public AnimalsController(Territory[][] territories, int numberOfSpecies, int newBirths) {
 		this.territories = territories;
 		this.numberOfSpecies = numberOfSpecies;
 		height = territories.length;
 		width = territories[0].length;
+		this.newPopulation = newBirths;
 
 		species = new CopyOnWriteArrayList[numberOfSpecies+1];
 		for(int i = 0 ; i < numberOfSpecies+1 ; i++) {
@@ -34,37 +40,125 @@ public class AnimalsController {
 		AllObjects.getAllObjects().setAnimalsController(this);
 		population = 0;
 		lock = new Object();
+		animalSemaphore = new Semaphore(0);
+		controllSemaphore = new Semaphore(0);
+		stop = true;
 	}
 
 	public void kill() {
-		for(int i = 0 ; i < height ; i++) {//kill excess animals
-			for(int j = 0 ; j < width ; j++) {
-				territories[i][j].starve();
+		int deaths = 0;
+		synchronized (this) {
+//			System.out.println("before killing");
+			for(int i = 0 ; i < height ; i++) {//kill excess animals
+				for(int j = 0 ; j < width ; j++) {
+					deaths += territories[i][j].starve();
+				}
 			}
-		}
-		
-		for(int i = 0 ; i < numberOfSpecies+1 ; i++) {//find species of every territory
-			species[i].clear();
-		}
-		for(int i = 0 ; i < height ; i++) {//find species of every territory
-			for(int j = 0 ; j < width ; j++) {
-				species[territories[i][j].getSpecies()].add(territories[i][j]);
+
+			for(int i = 0 ; i < numberOfSpecies+1 ; i++) {//find species of every territory (clear last round)
+				species[i].clear();
 			}
-		}
-		for(int i = 1 ; i < numberOfSpecies/2 ; i++) {//eat each other!
-			for(Territory territory: species[i]) {
-				checkForPredators(territory, false);
+			for(int i = 0 ; i < height ; i++) {//find species of every territory
+				for(int j = 0 ; j < width ; j++) {
+					species[territories[i][j].getSpecies()].add(territories[i][j]);
+				}
 			}
-		}
-		for(int i = numberOfSpecies/2+1 ; i < numberOfSpecies+1 ; i++) {//Monsters are here!
-			for(Territory territory: species[i]) {
-				checkForPredators(territory, true);
+			for(int i = 1 ; i < numberOfSpecies/2 ; i++) {//eat each other!
+				for(Territory territory: species[i]) {
+					deaths += checkForPredators(territory, false);
+				}
 			}
+			for(int i = numberOfSpecies/2+1 ; i < numberOfSpecies+1 ; i++) {//Monsters are here!
+				for(Territory territory: species[i]) {
+					deaths += checkForPredators(territory, true);
+				}
+			}
+			this.newDeaths = deaths;
 		}
+		if (deaths != 0) {
+			waitForAnimalsStop();
+		}
+//		System.out.println("after killing");
 
 	}
 
-	private void checkForPredators(Territory territory, boolean isMonster) {
+	public void birth(int k) {
+		int currPopulation = population;
+		int births = 0;
+//		System.out.println("before birth");
+		synchronized (lock) {
+			for(int i = 0 ; i < height ; i++) {
+				for(int j = 0 ; j < width ; j++) {
+					births += territories[i][j].birth(k);
+				}
+			}
+			this.newPopulation = currPopulation+births;
+//			System.out.println("birth count:"+births);
+		}
+		if (births != 0) {
+			waitForAnimalsStop();
+		}
+//		System.out.println("after birth");
+	}
+
+	public void sleep() throws InterruptedException {
+		synchronized (lock) {
+			waiting++;
+			if(waiting == newPopulation) {
+//		if(newBirths != 0 && waiting == population) {
+				controllSemaphore.release();
+//				System.out.println("RELEASING");
+			}else {
+//				System.out.println("in sleep");
+//				System.out.println(waiting);
+//				System.out.println(population);
+//				System.out.println(newPopulation);
+			}
+		}
+		
+		animalSemaphore.acquire();
+	}
+
+	synchronized public void increasePopulation(int n) {
+		population += n;
+	}
+
+	synchronized public void decreasePopultion(int n) {
+		waiting -= n;
+		if(waiting == population-newDeaths) {
+				population = waiting;
+				controllSemaphore.release();
+		}else {
+//			System.out.println("in decrease ");
+//			System.out.println(waiting);
+//			System.out.println(population);
+		}
+	}
+
+	public void resume() {
+//		System.out.println("before resume");
+		stop = false;
+		animalSemaphore.release(population);
+//		System.out.println("after resume");
+	}
+
+	 public void stop() {
+		 waiting = 0;
+		 stop = true;
+		 waitForAnimalsStop();
+	}
+
+	public void waitForAnimalsStop() {
+//		System.out.println("Waiting for animals:"+waiting+"/"+population);
+		try {
+			controllSemaphore.acquire();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+//		System.out.println("Waiting finished for animals:"+waiting+"/"+population);
+	}
+	
+	private int checkForPredators(Territory territory, boolean isMonster) {
 		int [] temp = new int[numberOfSpecies+1];
 		if(isMonster) {
 			for(int i = territory.getX()-1 ; i < territory.getX()+2 ; i++) {
@@ -91,22 +185,14 @@ public class AnimalsController {
 		}
 		for(int i = 1; i<=numberOfSpecies ; i++) {
 			if(temp[i] > territory.getPower() && i!=territory.getSpecies()) {
-				territory.die();
-				break;
+				return territory.die();
 			}
 		}
+		
+		return 0;
 
 	}
-
-	public void birth(int k) {
-		for(int i = 0 ; i < height ; i++) {
-			for(int j = 0 ; j < width ; j++) {
-				territories[i][j].birth(k);
-			}
-		}
-		waitForStop();
-	}
-
+	
 	public boolean move(Animal animal, int x, int y) {
 		if(x >= 0 && x < height && y >= 0 && y < width) {
 			if(territories[x][y].requestMoving(animal)) {
@@ -119,57 +205,28 @@ public class AnimalsController {
 		return false;
 	}
 
-	synchronized public void sleep() throws InterruptedException {
-//		synchronized (lock) {
-			waiting++;
-//			lock.wait();
-//		}
-			this.wait();
-	}
-
-	synchronized public void increasePopulation(int n) {
-		population += n;
-	}
-
-	public boolean shouldStop() {
-		return stop;
-	}
-
-	synchronized public void decreasePopultion(int n) {
-		population -= n;
-		waiting -= n;
-	}
-
-	synchronized public void resume() {
-//		synchronized (lock) {
-//			lock.notifyAll();
-//		}		
-		this.notifyAll();
-		stop = false;
-
-	}
-
-	public void waitForStop() {
-		//		System.out.println("Waiting for animals:"+waiting+"/"+population);
-		while (waiting < population) {
-			System.out.println("waiting for animals:"+waiting+"/"+population);
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-
-	}
-
 	public void print() {
 		System.out.println("^ "+population+","+waiting);
 	}
 
-	public void stop() {
-		waiting = 0;
+	public void setStop() {
 		stop = true;
-		waitForStop();
+	}
+
+	public boolean isStop() {
+		return stop;
+	}
+
+	synchronized public void startLife() {
+		System.out.println("------------------------[life begins]------------------------");
+		for(int i = 0 ; i < height ; i++) {
+			for(int j = 0 ; j < width ; j++) {
+				territories[i][j].live();
+			}
+		}
+		newPopulation = population;
+		waitForAnimalsStop();
+		resume();
 	}
 
 }

@@ -49,22 +49,27 @@ public class Territory {
 		}
 	}
 
-	public void starve() {
+	public int starve() {
+		int temp = 0;
 		while(animals.size() > maxResident) {
 			animals.get(animals.size()-1).interrupt();
 			animals.remove(animals.size()-1);
+			temp++;
 		}
+		return temp;
 	}
 
-	public void birth(int k) {
+	public int birth(int k) {
+		int size = 0;
 		if(species != 0 && (k%species) == 0) {
-			int size = animals.size();
+			size = animals.size();
 			for(int i = 0 ; i < size ; i++) {
 				Animal animal = new Animal(x,y,species);
 				animals.add(animal);
 				animal.start();
 			}
 		}
+		return size;
 	}
 
 	public void live() {
@@ -73,44 +78,16 @@ public class Territory {
 		}
 	}
 
-	public void print() {
-		switch (species) {
-		case 1:	
-//			System.out.print(ANSI_BLACK_BACKGROUND+animals.size()+","+species+RESET);
-			System.out.print(""+Colors.BLACK_BACKGROUND+animals.size()+Colors.RESET);
-			break;
-		case 2:	
-//			System.out.print(ANSI_RED_BACKGROUND+animals.size()+","+species+RESET);
-			System.out.print(""+Colors.RED_BACKGROUND+animals.size()+Colors.RESET);
-			break;
-		case 3:	
-//			System.out.print(ANSI_YELLOW_BACKGROUND+ANSI_BLACK+animals.size()+","+species+RESET);
-			System.out.print(""+Colors.BLACK+Colors.YELLOW_BACKGROUND+animals.size()+Colors.RESET);
-			break;
-		case 4:	
-//			System.out.print(ANSI_BLUE_BACKGROUND+animals.size()+","+species+RESET);
-			System.out.print(""+Colors.BLUE_BACKGROUND+animals.size()+Colors.RESET);
-			break;
-		case 5:	
-			System.out.print(""+Colors.BLACK+Colors.GREEN_BACKGROUND+animals.size()+Colors.RESET);
-			break;
-		case 6:	
-			System.out.print(""+Colors.BLACK+Colors.WHITE_BACKGROUND+animals.size()+Colors.RESET);
-			break;
-		case 7:	
-			System.out.print(""+Colors.MAGENTA_BACKGROUND+animals.size()+Colors.RESET);
-			break;
-		case 8:	
-			System.out.print(""+Colors.BLACK+Colors.CYAN_BACKGROUND+animals.size()+Colors.RESET);
-			break;
-		default:
-			System.out.print(animals.size());
-//			System.out.print(animals.size()+","+species);
-			break;
+	public int die() {
+		int temp = animals.size();
+		while(animals.size() > 0) {
+			animals.get(animals.size()-1).interrupt();
+			animals.remove(animals.size()-1);
 		}
-//		System.out.print("[species"+species+" *"+animals.size()+"]");
+		species = 0;
+		return temp;
 	}
-
+	
 	public int getSpecies() {
 		return species;
 	}
@@ -131,14 +108,35 @@ public class Territory {
 		return animals.size()*species;
 	}
 
-	public void die() {
-		while(animals.size() > 0) {
-			animals.get(animals.size()-1).interrupt();
-			animals.remove(animals.size()-1);
+	public void print() {
+		switch (species) {
+		case 1:	
+			System.out.print(""+Colors.BLACK_BACKGROUND+animals.size()+Colors.RESET);
+			break;
+		case 2:	
+			System.out.print(""+Colors.RED_BACKGROUND+animals.size()+Colors.RESET);
+			break;
+		case 3:	
+			System.out.print(""+Colors.BLACK+Colors.YELLOW_BACKGROUND+animals.size()+Colors.RESET);
+			break;
+		case 4:	
+			System.out.print(""+Colors.BLUE_BACKGROUND+animals.size()+Colors.RESET);
+			break;
+		case 5:	
+			System.out.print(""+Colors.BLACK+Colors.GREEN_BACKGROUND+animals.size()+Colors.RESET);
+			break;
+		case 6:	
+			System.out.print(""+Colors.BLACK+Colors.WHITE_BACKGROUND+animals.size()+Colors.RESET);
+			break;
+		case 7:	
+			System.out.print(""+Colors.MAGENTA_BACKGROUND+animals.size()+Colors.RESET);
+			break;
+		case 8:	
+			System.out.print(""+Colors.BLACK+Colors.CYAN_BACKGROUND+animals.size()+Colors.RESET);
+			break;
+		default:
+			System.out.print(""+animals.size()+Colors.RESET);
+			break;
 		}
-		species = 0;
 	}
-	
-	
-	
 }

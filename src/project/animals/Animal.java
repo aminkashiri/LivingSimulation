@@ -17,20 +17,23 @@ public class Animal extends Thread{
 		species = c;
 		allObjects = AllObjects.getAllObjects();
 		this.animalsController = allObjects.getAnimalsController();
+		animalsController.increasePopulation(1);
 	}
 	
 
 	@Override
 	public void run() {
-		animalsController.increasePopulation(1);
+//		System.out.println("amim1");
 		int toX;
 		int toY;
 		while(true) {
-			if(animalsController.shouldStop()) {
+			if(animalsController.isStop()) {
 				try {
+//					System.out.println("amim2");
 					animalsController.sleep();
 				} catch (InterruptedException e) {
 //					e.printStackTrace();
+//					System.out.println("Interrupted");
 					break;
 				}
 			}
@@ -44,7 +47,7 @@ public class Animal extends Thread{
 			animalsController.move(this, toX, toY);
 			
 			try {
-				Thread.sleep(100);
+				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

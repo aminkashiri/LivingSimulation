@@ -5,7 +5,6 @@ import project.animals.AnimalsController;
 
 public class World {
 	Territory[][] territories;
-	public boolean shouldMove;
 	int maxResidnet;
 	int width;
 	int height;
@@ -15,35 +14,17 @@ public class World {
 	int year;
 	AnimalsController animalsController;
 	
-	public World(int r, int s, int n, int m, int k, int t) {
+	public World(int r, int s, int n, int m, int k) {
 		numberOfSpecies = r;
 		initialPopulation = s;
 		height = n;
 		width = m;
 		maxResidnet = k;
-		shouldMove = false;
 		
 		year = 0;
-//		Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
 		initialize();
-		startLife();
-	}
-
-	private void startLife() {
-		animalsController.stop();
-		System.out.println("------------------------[life begins]------------------------");
 		printWorld();
-		for(int i = 0 ; i < height ; i++) {
-			for(int j = 0 ; j < width ; j++) {
-				territories[i][j].live();
-			}
-		}
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		animalsController.resume();
+		animalsController.startLife();
 	}
 
 	private void initialize() {
@@ -54,7 +35,7 @@ public class World {
 			}
 		}
 		
-		animalsController = new AnimalsController(territories, numberOfSpecies);
+		animalsController = new AnimalsController(territories, numberOfSpecies, numberOfSpecies*initialPopulation);
 		
 		int deltaX = height/numberOfSpecies;
 		int deltaY = width/initialPopulation;
@@ -71,30 +52,30 @@ public class World {
 
 	public void evolve() {
 		year = (year % numberOfSpecies) +1;
+//		System.out.println("before evolve");
 		animalsController.stop();
-		System.out.println("----------------[Before Death]----------------");
-		printWorld();
+//		System.out.println("----------------[Before Death]----------------");
+//		printWorld();
 		animalsController.kill();
-		System.out.println("----------------[After Death]----------------");
-		printWorld();
+//		System.out.println("----------------[After Death]----------------");
+//		printWorld();
 		animalsController.birth(year);
-		System.out.println("----------------[Childs Are Born]----------------");
-		printWorld();
-		System.out.println("----------------[Next Generation]----------------\n");
+//		System.out.println("----------------[Childs Are Born]----------------");
+//		printWorld();
+//		System.out.println("----------------[Next Generation]----------------\n");
 		animalsController.resume();
 	}
-
+	
 	public void printWorld() {
 		for(int i = 0 ; i < height ; i++) {
 			for(int j = 0 ; j < width ; j++) {
 				territories[i][j].print();
 				System.out.print("  ");
 			}
-//			System.out.println("---"+Thread.currentThread().getPriority());
 			System.out.println();
 		}
 		System.out.println();
-		animalsController.print();
+//		animalsController.print();
 	}
 
 }
