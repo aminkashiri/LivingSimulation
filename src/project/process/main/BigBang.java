@@ -17,10 +17,10 @@ public class BigBang {
 //		int m = scanner.nextInt();	
 //		int k = scanner.nextInt();	
 //		int t = scanner.nextInt();
-		int r = 4;
-		int s = 1;
-		int n = 8;
-		int m = 8;
+		int r = 8;
+		int s = 4;
+		int n = 32;
+		int m = 32;
 		int k = 4;
 		double t = 1;
 		
@@ -37,13 +37,13 @@ public class BigBang {
 			@Override
 			public void run() {
 				counter++;
-//				if(counter % 4 == 0) {
+				if(counter % 4 == 0) {
 					world.evolve();
-//				}
-//				if (counter % t == 0) {
-//					System.out.println("----------------------------------- Time:"+counter);
-//					world.printWorld();
-//				}
+				}
+				if (counter % t == 0) {
+					System.out.println("----------------------------------- Time:"+counter);
+					world.printWorld();
+				}
 			}
 		};
 		Timer timer = new Timer();

@@ -52,7 +52,7 @@ public class World {
 
 	public void evolve() {
 		year = (year % numberOfSpecies) +1;
-//		System.out.println("before evolve");
+		System.out.println("before evolve");
 		animalsController.stop();
 //		System.out.println("----------------[Before Death]----------------");
 //		printWorld();
@@ -64,6 +64,7 @@ public class World {
 //		printWorld();
 //		System.out.println("----------------[Next Generation]----------------\n");
 		animalsController.resume();
+		System.out.println("after evolve");
 	}
 	
 	public void printWorld() {

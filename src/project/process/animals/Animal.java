@@ -3,9 +3,6 @@ package project.process.animals;
 import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
 
-import project.process.server.AnimalsController;
-import project.utils.AllObjects;
-
 public class Animal extends Thread{
 	int species;
 	int x;
@@ -14,17 +11,7 @@ public class Animal extends Thread{
 	
 	public static void main(String[] args) throws Exception {
 		Animal animal = new Animal(Integer.valueOf(args[0]), Integer.valueOf(args[1]), Integer.valueOf(args[2]));
-		communicate(animal);
-	}
-	
-	public Animal(int a, int b, int c) {
-		x = a;
-		y = b;
-		species = c;
-		stop = true;
-	}
-	
-	private static void communicate(Animal animal) throws Exception {
+
 		Scanner scanner = new Scanner(System.in);
 		String command = scanner.nextLine();
 		if(command == "ready?") {
@@ -43,29 +30,60 @@ public class Animal extends Thread{
 			command = scanner.next();
 			switch(command) {
 			case "resume":
+				animal.stop = false;
+				synchronized (animal) {
+					animal.notify();
+				}
+				scanner.nextLine();
+				break;
+			case "die":
+				animal.interrupt();
+				scanner.nextLine();
+				break;
+			case "move":
+				if(scanner.next() == "pass") {
+					animal.x = Integer.valueOf(scanner.next());
+					animal.y = Integer.valueOf(scanner.next());
+					synchronized (animal) {
+						animal.notify();
+					}
+				}else {
+					synchronized (animal) {
+						animal.notify();
+					}
+				}
+				scanner.nextLine();
+				break;
+			case "stop":
+				animal.stop = true;
+				animal.notify();
+				scanner.nextLine();
 				break;
 			}
-			
 		}
-		
-		
 	}
-
-
+	
+	public Animal(int a, int b, int c) {
+		x = a;
+		y = b;
+		species = c;
+		stop = true;
+	}
+	
 	@Override
 	public void run() {
-		//		System.out.println("amim1");
 		int toX;
 		int toY;
 		while(true) {
 			if(stop) {
-				try {
-					//					System.out.println("amim2");
-					animalsController.sleep();
-				} catch (InterruptedException e) {
-					//					e.printStackTrace();
-					//					System.out.println("Interrupted");
-					break;
+				synchronized (this) {
+					try {
+						System.out.println("stopped");
+						this.wait();
+					} catch (InterruptedException e) {
+						//					e.printStackTrace();
+						break;
+					}
 				}
 			}
 
@@ -75,16 +93,25 @@ public class Animal extends Thread{
 
 			toX = ThreadLocalRandom.current().nextInt(-1, 2) + x;
 			toY = ThreadLocalRandom.current().nextInt(-1, 2) + y;
-			animalsController.move(this, toX, toY);
+			move(this, toX, toY);
 
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				e.printStackTrace(); //TODO: check here
+				break;
 			}
 		}
 
-		animalsController.decreasePopultion(1);
+	}
+
+	synchronized private void move(Animal animal, int toX, int toY) {
+		System.out.println("moveTo "+toX + " " + toY);
+		try {
+			this.wait();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public int getX() {

@@ -2,21 +2,23 @@ package project.utils;
 
 import java.util.Random;
 
+import project.process.server.ServerController;
 import project.thread.animals.AnimalsController;
+
 
 public class AllObjects {
 	static AllObjects allObjects;
 	Random random;
-	AnimalsController animalsControllerThread;
-	project.process.server.AnimalsController animalsController;
+	AnimalsController animalsController;
+	ServerController serverController;
 
 	
-	public project.process.server.AnimalsController getAnimalsController() {
-		return animalsController;
+	public project.process.server.ServerController getserverController() {
+		return serverController;
 	}
 
-	public void setAnimalsController(project.process.server.AnimalsController animalsController) {
-		this.animalsController = animalsController;
+	public void setAnimalsController(ServerController serverController) {
+		this.serverController = serverController;
 	}
 
 	private AllObjects() {
@@ -31,10 +33,10 @@ public class AllObjects {
 	}
 	
 	public AnimalsController getAnimalsControllerThread() {
-		return animalsControllerThread;
+		return animalsController;
 	}
 	
 	public void setAnimalsControllerThread(AnimalsController animalsController) {
-		this.animalsControllerThread = animalsController;
+		this.animalsController = animalsController;
 	}
 }

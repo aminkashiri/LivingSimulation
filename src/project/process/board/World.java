@@ -1,7 +1,10 @@
 package project.process.board;
 
+import java.io.IOException;
+
 import project.process.animals.Animal;
-import project.process.server.AnimalsController;
+import project.process.server.AnimalController;
+import project.process.server.ServerController;
 
 public class World {
 	Territory[][] territories;
@@ -12,7 +15,7 @@ public class World {
 	int initialPopulation;
 	
 	int year;
-	AnimalsController animalsController;
+	ServerController serverController;
 	
 	public World(int r, int s, int n, int m, int k) {
 		numberOfSpecies = r;
@@ -24,7 +27,7 @@ public class World {
 		year = 0;
 		initialize();
 		printWorld();
-		animalsController.startLife();
+		serverController.startLife();
 	}
 
 	private void initialize() {
@@ -35,7 +38,7 @@ public class World {
 			}
 		}
 		
-		animalsController = new AnimalsController(territories, numberOfSpecies, numberOfSpecies*initialPopulation);
+		serverController = new ServerController(territories, numberOfSpecies, numberOfSpecies*initialPopulation);
 		
 		int deltaX = height/numberOfSpecies;
 		int deltaY = width/initialPopulation;
@@ -44,8 +47,15 @@ public class World {
 		for(int i = 0 ; i<numberOfSpecies ; i++) {//i+1 is species number
 			x = deltaX*(i+1)-1;
 			for(int j = 0 ; j<initialPopulation ; j++) {
-				animal = new Animal(x, (j+1)*deltaY-1, i+1);
-				territories[x][(j+1)*deltaY-1].giveLife(animal);
+				try {
+					Process p = Runtime.getRuntime().exec("java  -cp /home/amin/Workspaces/JavaWorkspace/OS/bin project.process.animals.Animal "+x+" "+((j+1)*deltaY-1)+" "+(i+1));
+					AnimalController animalController = new AnimalController(x, (j+1)*deltaY-1, i+1, p);
+					territories[x][(j+1)*deltaY-1].giveLife(animalController);
+				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (Exception e) {
+					e.printStackTrace();
+				} 
 			}
 		}
 	}
@@ -53,17 +63,17 @@ public class World {
 	public void evolve() {
 		year = (year % numberOfSpecies) +1;
 //		System.out.println("before evolve");
-		animalsController.stop();
+		serverController.stop();
 //		System.out.println("----------------[Before Death]----------------");
 //		printWorld();
-		animalsController.kill();
+		serverController.kill();
 //		System.out.println("----------------[After Death]----------------");
 //		printWorld();
-		animalsController.birth(year);
+		serverController.birth(year);
 //		System.out.println("----------------[Childs Are Born]----------------");
 //		printWorld();
 //		System.out.println("----------------[Next Generation]----------------\n");
-		animalsController.resume();
+		serverController.resume();
 	}
 	
 	public void printWorld() {
