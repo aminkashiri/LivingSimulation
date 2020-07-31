@@ -24,7 +24,6 @@ public class Territory{
 		this.y = y;
 		species = 0;
 		serverController = AllObjects.getAllObjects().getserverController();
-
 	}
 	
 	public void giveLife(AnimalController animalController) {
@@ -54,7 +53,9 @@ public class Territory{
 	public int starve() {
 		int temp = 0;
 		while(animalControllers.size() > maxResident) {
-			animalControllers.get(animalControllers.size()-1).kill();
+			animalControllers.get(animalControllers.size()-1).interrupt();
+//			animalControllers.get(animalControllers.size()-1).die();
+//			animalControllers.get(animalControllers.size()-1).died = true;
 			animalControllers.remove(animalControllers.size()-1);
 			temp++;
 		}
@@ -68,9 +69,10 @@ public class Territory{
 			for(int i = 0 ; i < size ; i++) {
 				Process p;
 				try {
-					p = Runtime.getRuntime().exec("java  -cp /home/amin/Workspaces/JavaWorkspace/OS/bin project.process.animals.Animal "+x+" "+y+" "+species);
+					p = Runtime.getRuntime().exec("java  -cp /home/amin/Workspaces/JavaWorkspace/OS/bin project.process.animals.Animal "+x+" "+y+" "+species+" "+(serverController.getPopulation()+1));
 					AnimalController animalController = new AnimalController(x, y, species, p);
 					animalController.start();
+					animalControllers.add(animalController);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -88,13 +90,15 @@ public class Territory{
 			animalController.start();
 			return 1;
 		}
-		return -1000000000;
+		return 0;
 	}
 
 	public int die() {
 		int temp = animalControllers.size();
 		while(animalControllers.size() > 0) {
-			animalControllers.get(animalControllers.size()-1).interrupt();
+			animalControllers.get(animalControllers.size()-1).interrupt();;
+//			animalControllers.get(animalControllers.size()-1).die();;
+//			animalControllers.get(animalControllers.size()-1).died = true;
 			animalControllers.remove(animalControllers.size()-1);
 		}
 		species = 0;
@@ -153,10 +157,10 @@ public class Territory{
 		}
 	}
 
-	public void stop() {
-		for(AnimalController animalController: animalControllers) {
-			animalController.sendStop();
-		}
-			
-	}
+//	public void stop() {
+//		for(AnimalController animalController: animalControllers) {
+//			animalController.sendStop();
+//		}
+//			
+//	}
 }

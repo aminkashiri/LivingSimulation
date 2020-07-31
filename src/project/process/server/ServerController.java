@@ -38,12 +38,12 @@ public class ServerController {
 		}
 
 
-		AllObjects.getAllObjects().setAnimalsController(this);
+		AllObjects.getAllObjects().setServerController(this);
 		population = 0;
 		lock = new Object();
 		animalSemaphore = new Semaphore(0);
 		controllSemaphore = new Semaphore(0);
-		stop = true;
+		stop = false;
 	}
 
 	public void kill() {
@@ -84,9 +84,11 @@ public class ServerController {
 			}
 			this.newDeaths = deaths;
 		}
-		if (deaths != 0) {
-			waitForAnimalsStop();
-		}
+		this.population = this.population-newDeaths;
+		this.waiting = this.waiting - newDeaths;
+//		if (deaths != 0) {
+//			waitForAnimalsStop();
+//		}
 //		System.out.println("after killing");
 
 	}
@@ -101,11 +103,13 @@ public class ServerController {
 					births += territories[i][j].birth(k);
 				}
 			}
+//			System.out.println("--------------------> "+currPopulation+" "+births+" "+population);
 			this.newPopulation = currPopulation+births;
 //			System.out.println("birth count:"+births);
 		}
 		if (births != 0) {
 			waitForAnimalsStop();
+			this.population = this.newPopulation;
 		}
 //		System.out.println("after birth");
 	}
@@ -124,52 +128,58 @@ public class ServerController {
 //				System.out.println(newPopulation);
 			}
 		}
-		
-		animalSemaphore.acquire();
+		try {
+			animalSemaphore.acquire();
+		}catch (Exception e) {
+			animalSemaphore.acquire();
+			
+		}
 	}
 
-	synchronized public void decreasePopultion(int n) {
-		waiting -= n;
-		if(waiting == population-newDeaths) {
-				population = waiting;
-				controllSemaphore.release();
-		}else {
+//	synchronized public void decreasePopultion(int n) {
+//		waiting -= n;
+////		population -= n;
+////		newPopulation -= n;
+//		if(waiting == population-newDeaths) {
+//				population = waiting;
+//				controllSemaphore.release();
+//		}else {
 //			System.out.println("in decrease ");
 //			System.out.println(waiting);
 //			System.out.println(population);
-		}
-	}
+//		}
+//	}
 
 	public void resume() {
 ////		System.out.println("before resume");
 		stop = false;
-		animalSemaphore.release(population);
+		animalSemaphore.release(population+newDeaths);
 ////		System.out.println("after resume");
 	}
 
 	 public void stop() {
 		 waiting = 0;
 		 stop = true;
-		 sendWaitSignal();
+//		 sendWaitSignal();
 		 waitForAnimalsStop();
 	}
 
-	private void sendWaitSignal() {
-		for(int i = 0 ; i < height ; i++) {
-			for(int j = 0 ; j < width ; j++) {
-				territories[i][j].stop();
-			}
-		}
-	}
+//	private void sendWaitSignal() {
+//		for(int i = 0 ; i < height ; i++) {
+//			for(int j = 0 ; j < width ; j++) {
+//				territories[i][j].stop();
+//			}
+//		}
+//	}
 
 	public void waitForAnimalsStop() {
-//		System.out.println("Waiting for animals:"+waiting+"/"+population);
+//		System.out.println("Waiting for animals:"+waiting+"/"+newPopulation);
 		try {
 			controllSemaphore.acquire();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-//		System.out.println("Waiting finished for animals:"+waiting+"/"+population);
+//		System.out.println("Waiting finished for animals:"+waiting+"/"+newPopulation);
 	}
 	
 	private int checkForPredators(Territory territory, boolean isMonster) {
@@ -244,8 +254,15 @@ public class ServerController {
 		}
 		newPopulation = population;
 		this.population = population;
+//		System.out.println("Here1");
 		waitForAnimalsStop();
+//		System.out.println("Here2");
 		resume();
+//		System.out.println("Here3");
+	}
+
+	public int getPopulation() {
+		return population;
 	}
 
 }

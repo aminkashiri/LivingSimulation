@@ -13,11 +13,11 @@ public class AllObjects {
 	ServerController serverController;
 
 	
-	public project.process.server.ServerController getserverController() {
+	public ServerController getserverController() {
 		return serverController;
 	}
 
-	public void setAnimalsController(ServerController serverController) {
+	public void setServerController(ServerController serverController) {
 		this.serverController = serverController;
 	}
 
@@ -36,7 +36,7 @@ public class AllObjects {
 		return animalsController;
 	}
 	
-	public void setAnimalsControllerThread(AnimalsController animalsController) {
+	public void setAnimalsController(AnimalsController animalsController) {
 		this.animalsController = animalsController;
 	}
 }

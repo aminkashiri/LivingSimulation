@@ -15,6 +15,7 @@ public class AnimalController extends Thread{
 	Scanner scanner;
 
 	ServerController serverController;
+	public boolean died;
 
 	public AnimalController(int x, int y, int species, Process p) throws Exception {
 		super();
@@ -22,55 +23,60 @@ public class AnimalController extends Thread{
 		this.y = y;
 		this.species = species;
 		this.p = p;
-		pw = new PrintWriter(p.getOutputStream());
+		pw = new PrintWriter(p.getOutputStream(),true);
 		scanner = new Scanner(p.getInputStream());
-//		Scanner scanner = new Scanner(p.getInputStream());
-		pw.write("loooop");
-		pw.flush();
-		System.out.println("1");
-		System.out.println(scanner.nextLine());
-		System.out.println("2");
-		System.exit(0);
-		
+		died = false;
 		serverController = AllObjects.getAllObjects().getserverController();
 	}
 
 	@Override
 	public void run() {
-		String command = scanner.nextLine();
-		System.out.println(command);
-		pw.write("start");
-		System.out.println(p.isAlive());
-		if(command != "started") {
-			try {
-				throw new Exception();
-			}catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
+		String command;
+		pw.println("start");
+//		System.out.println("animal controller started");
 		while(true) {
+			if(serverController.isStop()) {
+//				System.out.println("animal controller: server is in stop mode");
+				if(scanner.hasNext()) {
+					scanner.nextLine();
+				}
+//				System.out.println("animal controller: sending stop");
+				pw.println("stop");
+			}
 			command = scanner.next();
+//			System.out.println("animal controller received " + command);
+			if(Thread.currentThread().isInterrupted()) {
+				pw.println("die");
+				break;
+//				serverController.decreasePopultion(1);
+			}
 			synchronized (this) {
 				switch (command) {
 				case "stopped":
 					try {
+//						System.out.println("animal controller: animal is stopped");
 						serverController.sleep();
-						pw.write("resume");
+//						System.out.println("animal controller: server resumes, sending to animal");
+						pw.println("resume");
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					scanner.nextLine();
 					break;
-				case "move":
-					pw.write("move ");
+				case "moveTo":
 					int x = Integer.valueOf(scanner.next());
 					int y = Integer.valueOf(scanner.next());
+					pw.printf("move ");
+//					System.out.print("---> ("+x+" "+y+")");
 					if(serverController.move(this, x, y)) {
-						pw.write("pass");
+//						System.out.println(" passed");
+						pw.printf("pass\n");
 					}else {
-						pw.write("fail");
+//						System.out.println(" failed");
+						pw.printf("fail\n");
 					}
+					scanner.nextLine();
 					break;
 
 				}
@@ -98,26 +104,11 @@ public class AnimalController extends Thread{
 	public void setY(int y) {
 		this.y = y;
 	}
-
-	public void sendStop() {
-		synchronized (this) {
-			if(scanner.hasNext()) {
-				scanner.nextLine();
-			}
-			pw.write("stop");
-		}
-	}
-
-	public void kill() {
-		synchronized (this) {
-			if(scanner.hasNext()) {
-				scanner.nextLine();
-			}
-			pw.write("die");
-			serverController.decreasePopultion(1);
-		}
-		
-	}
-
+	
+//	public void die() {
+//		pw.println("die");
+//		serverController.decreasePopultion(1);
+//		
+//	}
 
 }

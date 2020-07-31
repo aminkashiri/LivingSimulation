@@ -39,7 +39,7 @@ public class AnimalsController {
 		}
 
 
-		AllObjects.getAllObjects().setAnimalsControllerThread(this);
+		AllObjects.getAllObjects().setAnimalsController(this);
 		population = 0;
 		lock = new Object();
 		animalSemaphore = new Semaphore(0);

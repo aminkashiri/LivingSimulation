@@ -35,14 +35,13 @@ public class World {
 
 	private void initialize() {
 		territories = new Territory[height][width];
+		serverController = new ServerController(territories, numberOfSpecies, numberOfSpecies*initialPopulation);
 		for(int i = 0 ; i < height ; i++) {
 			for(int j = 0 ; j < width ; j++) {
 				territories[i][j] = new Territory(maxResidnet, i, j);
 			}
 		}
 
-		serverController = new ServerController(territories, numberOfSpecies, numberOfSpecies*initialPopulation);
-		Animal.initialize();
 		int deltaX = height/numberOfSpecies;
 		int deltaY = width/initialPopulation;
 		int x;
@@ -53,11 +52,9 @@ public class World {
 			for(int j = 0 ; j<initialPopulation ; j++) {
 				try {
 					ids++;
-//					Process p = Runtime.getRuntime().exec("java  -cp /home/amin/Workspaces/JavaWorkspace/OS/bin project.process.animals.Animal "+x+" "+((j+1)*deltaY-1)+" "+(i+1) + " " + ids);
-					Process p = Runtime.getRuntime().exec("java  -cp /home/amin/Workspaces/JavaWorkspace/OS/bin project.process.animals.Animal2 "+x+" "+((j+1)*deltaY-1)+" "+(i+1) + " " + ids);
+					Process p = Runtime.getRuntime().exec("java  -cp /home/amin/Workspaces/JavaWorkspace/OS/bin project.process.animals.Animal "+x+" "+((j+1)*deltaY-1)+" "+(i+1) + " " + ids);
 					AnimalController animalController = new AnimalController(x, (j+1)*deltaY-1, i+1, p);
 					territories[x][(j+1)*deltaY-1].giveLife(animalController);
-
 				} catch (IOException e) {
 					e.printStackTrace();
 				} catch (Exception e) {
@@ -69,7 +66,7 @@ public class World {
 
 	public void evolve() {
 		year = (year % numberOfSpecies) +1;
-		System.out.println("before evolve");
+//		System.out.println("before evolve");
 		serverController.stop();
 //		System.out.println("----------------[Before Death]----------------");
 //		printWorld();
@@ -81,7 +78,7 @@ public class World {
 //		printWorld();
 //		System.out.println("----------------[Next Generation]----------------\n");
 		serverController.resume();
-		System.out.println("after evolve");
+//		System.out.println("after evolve");
 	}
 	
 	public void printWorld() {

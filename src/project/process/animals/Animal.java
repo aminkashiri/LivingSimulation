@@ -12,43 +12,29 @@ public class Animal extends Thread{
 	int species;
 	int x;
 	int y;
-	boolean stop;
+	private boolean stop;
 	int id;
-	
-//	static File file;
+
+	//	static File file;
 	static BufferedWriter bufferedWriter;
-	
+
 	public static void main(String[] args) {
-		try {
-			bufferedWriter.write("animal ");
-			bufferedWriter.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 		Animal animal = new Animal(Integer.valueOf(args[0]), Integer.valueOf(args[1]), Integer.valueOf(args[2]), Integer.valueOf(args[3]));
-		System.out.println("AMIN");
-//		System.out.println("started");
-		animal.log("started1");
+		animal.log("\ncreated");
 		Scanner scanner = new Scanner(System.in);
-		animal.log("started2");
-//		String command = scanner.nextLine();
-//		if(command == "ready?") {
-//			System.out.println("yes sir");
-//		}else {
-//			animal.log("error 1");
-//		}
-		String command = scanner.nextLine();
-//		command = scanner.nextLine();
-		if(command == "start") {
-			System.out.println("started");
-			animal.start();
-			animal.log("finally");
-		}else {
-			animal.log("error 2");
-		}
-		while(true) {
+		String command;
+loop:   while(true) {
+			animal.log("listening 1");
 			command = scanner.next();
+			animal.log(command);
+			animal.log("listening 2");
+
 			switch(command) {
+			case "start":
+				animal.log("started");
+				animal.start();
+				scanner.nextLine();
+				break;
 			case "resume":
 				animal.stop = false;
 				synchronized (animal) {
@@ -59,7 +45,7 @@ public class Animal extends Thread{
 			case "die":
 				animal.interrupt();
 				scanner.nextLine();
-				break;
+				break loop;
 			case "move":
 				if(scanner.next() == "pass") {
 					animal.x = Integer.valueOf(scanner.next());
@@ -75,18 +61,72 @@ public class Animal extends Thread{
 				scanner.nextLine();
 				break;
 			case "stop":
-				animal.stop = true;
-				animal.notify();
-				scanner.nextLine();
+				synchronized (animal) {
+					animal.stop = true;
+					animal.notify();
+					scanner.nextLine();
+				}
 				break;
 			}
 		}
 	}
-	
-	private void log(String string) {
+
+	@Override
+	public void run() {
+		int toX;
+		int toY;
+		while(true) {
+			log("begining of the loop");
+			if(this.stop) {
+				log("i should stop");
+				synchronized (this) {
+					try {
+						log("stopping");
+						System.out.println("stopped");
+						this.wait();
+					} catch (InterruptedException e) {
+						break;
+					}
+				}
+			}
+			log("stop finished/ or no need to stop");
+
+			if(Thread.currentThread().isInterrupted()) {
+				break;
+			}
+
+			toX = ThreadLocalRandom.current().nextInt(-1, 2) + x;
+			toY = ThreadLocalRandom.current().nextInt(-1, 2) + y;
+			move(this, toX, toY);
+
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				e.printStackTrace(); //TODO: check here
+				break;
+			}
+		}
+
+	}
+
+	private void move(Animal animal, int toX, int toY) {
+		synchronized (this) {
+			if(!stop) {
+				System.out.println("moveTo "+toX + " " + toY);
+				log("sending move req: "+toX + " " + toY);
+				try {
+					this.wait();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	void log(String string) {
 		synchronized(bufferedWriter) {
 			try {
-				bufferedWriter.write("animal "+id+" : "+string);
+				bufferedWriter.write("animal "+id+" : "+string+"\n");
 				bufferedWriter.flush();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -100,48 +140,14 @@ public class Animal extends Thread{
 		species = c;
 		this.id = id;
 		stop = true;
-	}
-	
-	@Override
-	public void run() {
-		int toX;
-		int toY;
-		while(true) {
-			if(stop) {
-				synchronized (this) {
-					try {
-						System.out.println("stopped");
-						this.wait();
-					} catch (InterruptedException e) {
-						//					e.printStackTrace();
-						break;
-					}
-				}
-			}
-
-			if(Thread.currentThread().isInterrupted()) {
-				break;
-			}
-
-			toX = ThreadLocalRandom.current().nextInt(-1, 2) + x;
-			toY = ThreadLocalRandom.current().nextInt(-1, 2) + y;
-			move(this, toX, toY);
-
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace(); //TODO: check here
-				break;
-			}
-		}
-
+		initialize();
 	}
 
-	synchronized private void move(Animal animal, int toX, int toY) {
-		System.out.println("moveTo "+toX + " " + toY);
+	private void initialize() {
+		String fileName = "src/logs/log.txt";
 		try {
-			this.wait();
-		} catch (InterruptedException e) {
+			bufferedWriter = new BufferedWriter(new FileWriter(fileName, true));
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -162,20 +168,4 @@ public class Animal extends Thread{
 		return species;
 	}
 
-	public static void initialize() {
-//		file = new File("src/logs/log.txt");
-		String fileName = "src/logs/log.txt";
-		try {
-//			file.createNewFile();
-			bufferedWriter = new BufferedWriter(new FileWriter(fileName, true));
-//			printWriter = new PrintWriter(file);
-//			printWriter.write("Start \n");
-//			printWriter.flush();
-			bufferedWriter.write("StarT \n");
-			bufferedWriter.flush();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 }
