@@ -10,23 +10,17 @@ public class BigBang extends Timer {
 	static int timeInterval = 1000;
 
 	public static void main(String[] args) {
-//		Scanner scanner = new Scanner(System.in);
-//		int r = scanner.nextInt();	
-//		int s = scanner.nextInt();	
-//		int n = scanner.nextInt();	
-//		int m = scanner.nextInt();	
-//		int k = scanner.nextInt();	
-//		int t = scanner.nextInt();
-		int r = 8;
-		int s = 4;
-		int n = 32;
-		int m = 32;
-		int k = 4;
-		double t = 1;
-//		int r = 4;
-//		int s = 1;
-//		int n = 8;
-//		int m = 8;
+		Scanner scanner = new Scanner(System.in);
+		int r = scanner.nextInt();	
+		int s = scanner.nextInt();	
+		int n = scanner.nextInt();	
+		int m = scanner.nextInt();	
+		int k = scanner.nextInt();	
+		int t = scanner.nextInt();
+//		int r = 8;
+//		int s = 4;
+//		int n = 32;
+//		int m = 32;
 //		int k = 4;
 //		double t = 1;
 		World world = new World(r, s, n, m, k);

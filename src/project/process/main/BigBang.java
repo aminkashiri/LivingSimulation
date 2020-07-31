@@ -7,22 +7,22 @@ import java.util.TimerTask;
 import project.process.board.World;
 
 public class BigBang {
-	static int timeInterval = 1000;
+	static int timeInterval = 2000;
 
 	public static void main(String[] args) {
-//		Scanner scanner = new Scanner(System.in);
-//		int r = scanner.nextInt();	
-//		int s = scanner.nextInt();	
-//		int n = scanner.nextInt();	
-//		int m = scanner.nextInt();	
-//		int k = scanner.nextInt();	
-//		int t = scanner.nextInt();
-		int r = 2;
-		int s = 2;
-		int n = 4;
-		int m = 4;
-		int k = 3;
-		double t = 1;
+		Scanner scanner = new Scanner(System.in);
+		int r = scanner.nextInt();	
+		int s = scanner.nextInt();	
+		int n = scanner.nextInt();	
+		int m = scanner.nextInt();	
+		int k = scanner.nextInt();	
+		int t = scanner.nextInt();
+//		int r = 3;
+//		int s = 2;
+//		int n = 6;
+//		int m = 6;
+//		int k = 3;
+//		double t = 1;
 		
 		World world = new World(r, s, n, m, k);
 		bigBang(world, t);
