@@ -1,5 +1,10 @@
 package project.process.animals;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -8,23 +13,38 @@ public class Animal extends Thread{
 	int x;
 	int y;
 	boolean stop;
+	int id;
 	
-	public static void main(String[] args) throws Exception {
-		Animal animal = new Animal(Integer.valueOf(args[0]), Integer.valueOf(args[1]), Integer.valueOf(args[2]));
-
-		Scanner scanner = new Scanner(System.in);
-		String command = scanner.nextLine();
-		if(command == "ready?") {
-			System.out.println("yes sir");
-		}else {
-			throw new Exception();
+//	static File file;
+	static BufferedWriter bufferedWriter;
+	
+	public static void main(String[] args) {
+		try {
+			bufferedWriter.write("animal ");
+			bufferedWriter.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		command = scanner.nextLine();
+		Animal animal = new Animal(Integer.valueOf(args[0]), Integer.valueOf(args[1]), Integer.valueOf(args[2]), Integer.valueOf(args[3]));
+		System.out.println("AMIN");
+//		System.out.println("started");
+		animal.log("started1");
+		Scanner scanner = new Scanner(System.in);
+		animal.log("started2");
+//		String command = scanner.nextLine();
+//		if(command == "ready?") {
+//			System.out.println("yes sir");
+//		}else {
+//			animal.log("error 1");
+//		}
+		String command = scanner.nextLine();
+//		command = scanner.nextLine();
 		if(command == "start") {
 			System.out.println("started");
 			animal.start();
+			animal.log("finally");
 		}else {
-			throw new Exception();
+			animal.log("error 2");
 		}
 		while(true) {
 			command = scanner.next();
@@ -63,10 +83,22 @@ public class Animal extends Thread{
 		}
 	}
 	
-	public Animal(int a, int b, int c) {
+	private void log(String string) {
+		synchronized(bufferedWriter) {
+			try {
+				bufferedWriter.write("animal "+id+" : "+string);
+				bufferedWriter.flush();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public Animal(int a, int b, int c, int id) {
 		x = a;
 		y = b;
 		species = c;
+		this.id = id;
 		stop = true;
 	}
 	
@@ -128,5 +160,22 @@ public class Animal extends Thread{
 	}
 	public int getSpecies() {
 		return species;
+	}
+
+	public static void initialize() {
+//		file = new File("src/logs/log.txt");
+		String fileName = "src/logs/log.txt";
+		try {
+//			file.createNewFile();
+			bufferedWriter = new BufferedWriter(new FileWriter(fileName, true));
+//			printWriter = new PrintWriter(file);
+//			printWriter.write("Start \n");
+//			printWriter.flush();
+			bufferedWriter.write("StarT \n");
+			bufferedWriter.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

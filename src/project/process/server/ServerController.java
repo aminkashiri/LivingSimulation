@@ -22,6 +22,8 @@ public class ServerController {
 	int newPopulation;
 	Semaphore animalSemaphore;
 	Semaphore controllSemaphore;
+	
+	boolean TABSAREH = false;
 
 	public ServerController(Territory[][] territories, int numberOfSpecies, int newBirths) {
 		this.territories = territories;
@@ -62,6 +64,7 @@ public class ServerController {
 					species[territories[i][j].getSpecies()].add(territories[i][j]);
 				}
 			}
+			if(TABSAREH == true) {//kill animals, with help to bigger ones
 			for(int i = 1 ; i < numberOfSpecies/2 ; i++) {//eat each other!
 				for(Territory territory: species[i]) {
 					deaths += checkForPredators(territory, false);
@@ -70,6 +73,13 @@ public class ServerController {
 			for(int i = numberOfSpecies/2+1 ; i < numberOfSpecies+1 ; i++) {//Monsters are here!
 				for(Territory territory: species[i]) {
 					deaths += checkForPredators(territory, true);
+				}
+			}
+			}else {//kill animals (without help to big ones)
+				for(int i = 0 ; i < height ; i++) {
+					for(int j = 0 ; j < width ; j++) {
+						deaths += checkForPredators(territories[i][j], (territories[i][j].getSpecies()>= numberOfSpecies/2 +1) );
+					}
 				}
 			}
 			this.newDeaths = deaths;
@@ -164,6 +174,9 @@ public class ServerController {
 	
 	private int checkForPredators(Territory territory, boolean isMonster) {
 		int [] temp = new int[numberOfSpecies+1];
+		if(TABSAREH == false) {
+			isMonster = false;
+		}
 		if(isMonster) {
 			for(int i = territory.getX()-1 ; i < territory.getX()+2 ; i++) {
 				for(int j = territory.getY()-1 ; j < territory.getY()+2 ; j++) {

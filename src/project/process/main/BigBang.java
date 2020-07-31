@@ -4,7 +4,7 @@ import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import project.thread.world.World;
+import project.process.board.World;
 
 public class BigBang {
 	static int timeInterval = 1000;
@@ -17,10 +17,10 @@ public class BigBang {
 //		int m = scanner.nextInt();	
 //		int k = scanner.nextInt();	
 //		int t = scanner.nextInt();
-		int r = 8;
-		int s = 4;
-		int n = 32;
-		int m = 32;
+		int r = 1;
+		int s = 1;
+		int n = 4;
+		int m = 4;
 		int k = 4;
 		double t = 1;
 		
@@ -41,7 +41,7 @@ public class BigBang {
 					world.evolve();
 				}
 				if (counter % t == 0) {
-					System.out.println("----------------------------------- Time:"+counter);
+					System.out.println("----------------------------------- Time:"+ (counter/4));
 					world.printWorld();
 				}
 			}

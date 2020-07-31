@@ -24,18 +24,23 @@ public class AnimalController extends Thread{
 		this.p = p;
 		pw = new PrintWriter(p.getOutputStream());
 		scanner = new Scanner(p.getInputStream());
-		pw.write("ready?");
-		String command = scanner.nextLine();
-		if(command != "yes sir") {
-			throw new Exception();
-		}
+//		Scanner scanner = new Scanner(p.getInputStream());
+		pw.write("loooop");
+		pw.flush();
+		System.out.println("1");
+		System.out.println(scanner.nextLine());
+		System.out.println("2");
+		System.exit(0);
+		
 		serverController = AllObjects.getAllObjects().getserverController();
 	}
 
 	@Override
 	public void run() {
-		pw.write("start");
 		String command = scanner.nextLine();
+		System.out.println(command);
+		pw.write("start");
+		System.out.println(p.isAlive());
 		if(command != "started") {
 			try {
 				throw new Exception();

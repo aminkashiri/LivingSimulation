@@ -1,10 +1,12 @@
 package project.process.board;
 
 import java.io.IOException;
+import java.util.Scanner;
 
 import project.process.animals.Animal;
 import project.process.server.AnimalController;
 import project.process.server.ServerController;
+import project.thread.animals.AnimalsController;
 
 public class World {
 	Territory[][] territories;
@@ -28,6 +30,7 @@ public class World {
 		initialize();
 		printWorld();
 		serverController.startLife();
+
 	}
 
 	private void initialize() {
@@ -37,20 +40,24 @@ public class World {
 				territories[i][j] = new Territory(maxResidnet, i, j);
 			}
 		}
-		
+
 		serverController = new ServerController(territories, numberOfSpecies, numberOfSpecies*initialPopulation);
-		
+		Animal.initialize();
 		int deltaX = height/numberOfSpecies;
 		int deltaY = width/initialPopulation;
 		int x;
 		Animal animal;
+		int ids = 0;
 		for(int i = 0 ; i<numberOfSpecies ; i++) {//i+1 is species number
 			x = deltaX*(i+1)-1;
 			for(int j = 0 ; j<initialPopulation ; j++) {
 				try {
-					Process p = Runtime.getRuntime().exec("java  -cp /home/amin/Workspaces/JavaWorkspace/OS/bin project.process.animals.Animal "+x+" "+((j+1)*deltaY-1)+" "+(i+1));
+					ids++;
+//					Process p = Runtime.getRuntime().exec("java  -cp /home/amin/Workspaces/JavaWorkspace/OS/bin project.process.animals.Animal "+x+" "+((j+1)*deltaY-1)+" "+(i+1) + " " + ids);
+					Process p = Runtime.getRuntime().exec("java  -cp /home/amin/Workspaces/JavaWorkspace/OS/bin project.process.animals.Animal2 "+x+" "+((j+1)*deltaY-1)+" "+(i+1) + " " + ids);
 					AnimalController animalController = new AnimalController(x, (j+1)*deltaY-1, i+1, p);
 					territories[x][(j+1)*deltaY-1].giveLife(animalController);
+
 				} catch (IOException e) {
 					e.printStackTrace();
 				} catch (Exception e) {
@@ -62,7 +69,7 @@ public class World {
 
 	public void evolve() {
 		year = (year % numberOfSpecies) +1;
-//		System.out.println("before evolve");
+		System.out.println("before evolve");
 		serverController.stop();
 //		System.out.println("----------------[Before Death]----------------");
 //		printWorld();
@@ -74,6 +81,7 @@ public class World {
 //		printWorld();
 //		System.out.println("----------------[Next Generation]----------------\n");
 		serverController.resume();
+		System.out.println("after evolve");
 	}
 	
 	public void printWorld() {

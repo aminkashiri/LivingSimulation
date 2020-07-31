@@ -17,12 +17,18 @@ public class BigBang extends Timer {
 //		int m = scanner.nextInt();	
 //		int k = scanner.nextInt();	
 //		int t = scanner.nextInt();
-		int r = 4;
-		int s = 1;
-		int n = 8;
-		int m = 8;
+		int r = 8;
+		int s = 4;
+		int n = 32;
+		int m = 32;
 		int k = 4;
 		double t = 1;
+//		int r = 4;
+//		int s = 1;
+//		int n = 8;
+//		int m = 8;
+//		int k = 4;
+//		double t = 1;
 		World world = new World(r, s, n, m, k);
 		bigBang(world, t);
 //		scanner.close();
@@ -40,7 +46,7 @@ public class BigBang extends Timer {
 					world.evolve();
 				}
 				if (counter % t == 0) {
-					System.out.println("----------------------------------- Time:"+counter);
+					System.out.println("----------------------------------- Time:"+ (counter/4));
 					world.printWorld();
 				}
 //				counter++;
