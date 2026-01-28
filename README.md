@@ -19,6 +19,8 @@ The project has **two concurrency implementations**:
     - send occasional commands or signals
     - receive status updates from each animal
 
+![Demo](media/output.gif)
+
 
 ---
 
