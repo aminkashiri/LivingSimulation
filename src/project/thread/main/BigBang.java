@@ -10,6 +10,8 @@ public class BigBang extends Timer {
 	static int timeInterval = 1000;
 
 	public static void main(String[] args) {
+		System.out.println("Input these values in this order (separated by spaces):");
+		System.out.println("r (number of species), s (initial population per species), n (world height), m (world width), k (max residents per territory), t (print interval)");
 		Scanner scanner = new Scanner(System.in);
 		int r = scanner.nextInt();	
 		int s = scanner.nextInt();	
@@ -40,17 +42,11 @@ public class BigBang extends Timer {
 					world.evolve();
 				}
 				if (counter % t == 0) {
-					System.out.println("----------------------------------- Time:"+ (counter/4));
+					System.out.print("\033[H\033[2J");
+					System.out.flush();
+					System.out.println("-------------------- Time:"+ counter + " --------------------");
 					world.printWorld();
 				}
-//				counter++;
-//				if(counter % 2 == 0) {
-//					world.evolve();
-//				}
-//				if (counter % t == 0) {
-//					System.out.println("----------------------------------- Time:"+counter);
-//					world.printWorld();
-//				}
 			}
 		};
 		Timer timer = new Timer();

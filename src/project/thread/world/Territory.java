@@ -111,7 +111,7 @@ public class Territory {
 	public void print() {
 		switch (species) {
 		case 1:	
-			System.out.print(""+Colors.BLACK_BACKGROUND+animals.size()+Colors.RESET);
+			System.out.print(""+Colors.BLACK+Colors.CYAN_BACKGROUND+animals.size()+Colors.RESET);
 			break;
 		case 2:	
 			System.out.print(""+Colors.RED_BACKGROUND+animals.size()+Colors.RESET);
@@ -132,7 +132,7 @@ public class Territory {
 			System.out.print(""+Colors.MAGENTA_BACKGROUND+animals.size()+Colors.RESET);
 			break;
 		case 8:	
-			System.out.print(""+Colors.BLACK+Colors.CYAN_BACKGROUND+animals.size()+Colors.RESET);
+			System.out.print(""+Colors.BLACK_BACKGROUND+animals.size()+Colors.RESET);
 			break;
 		default:
 			System.out.print(""+animals.size()+Colors.RESET);
