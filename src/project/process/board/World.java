@@ -52,7 +52,9 @@ public class World {
 			for(int j = 0 ; j<initialPopulation ; j++) {
 				try {
 					ids++;
-					Process p = Runtime.getRuntime().exec("java  -cp /home/amin/Workspaces/JavaWorkspace/OS/bin project.process.animals.Animal "+x+" "+((j+1)*deltaY-1)+" "+(i+1) + " " + ids);
+					String classpath = System.getProperty("user.dir") + "/bin";
+					String command = "java  -cp " + classpath + " project.process.animals.Animal "+x+" "+((j+1)*deltaY-1)+" "+(i+1) + " " + ids;
+					Process p = Runtime.getRuntime().exec(command);
 					AnimalController animalController = new AnimalController(x, (j+1)*deltaY-1, i+1, p);
 					territories[x][(j+1)*deltaY-1].giveLife(animalController);
 				} catch (IOException e) {

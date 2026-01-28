@@ -69,7 +69,8 @@ public class Territory{
 			for(int i = 0 ; i < size ; i++) {
 				Process p;
 				try {
-					p = Runtime.getRuntime().exec("java  -cp /home/amin/Workspaces/JavaWorkspace/OS/bin project.process.animals.Animal "+x+" "+y+" "+species+" "+(serverController.getPopulation()+1));
+					String classpath = System.getProperty("user.dir") + "/bin";
+					p = Runtime.getRuntime().exec("java  -cp " + classpath + " project.process.animals.Animal "+x+" "+y+" "+species+" "+(serverController.getPopulation()+1));
 					AnimalController animalController = new AnimalController(x, y, species, p);
 					animalController.start();
 					animalControllers.add(animalController);
